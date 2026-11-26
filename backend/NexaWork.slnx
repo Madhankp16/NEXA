@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="NexaWork.Api/NexaWork.Api.csproj" />
+  <Project Path="NexaWork.Application/NexaWork.Application.csproj" />
+  <Project Path="NexaWork.Domain/NexaWork.Domain.csproj" />
+  <Project Path="NexaWork.Infrastructure/NexaWork.Infrastructure.csproj" />
+  <Project Path="NexaWork.Tests/NexaWork.Tests.csproj" />
+</Solution>

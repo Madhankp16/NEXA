@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nexawork-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: nexawork_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nexawork-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexawork-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - nexawork-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexawork-api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=nexawork_db;Username=postgres;Password=Password123!
+      - Redis__ConnectionString=redis:6379
+      - JwtSettings__Secret=EnterpriseNexaWorkSuperSecretKeyForJwt20261125VeryLongKey!
+    ports:
+      - "5000:8080"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - nexawork-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nexawork-client
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - nexawork-network
+
+volumes:
+  postgres_data:
+
+networks:
+  nexawork-network:
+    driver: bridge
